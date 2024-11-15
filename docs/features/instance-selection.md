@@ -5,7 +5,7 @@ to use for the preliminary experimentation without user intervention.
 
 ## TL;DR
 
-Any JAR file built con Mork v0.18 or later, can be invoked as follows:
+Any JAR file built with Mork v0.18 or later, can be invoked as follows:
 ```text
 java -jar MyProblem.jar --instance-selector
 ```
