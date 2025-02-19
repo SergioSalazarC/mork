@@ -1,10 +1,22 @@
 # Developing
 - (New) Objective class: a class that represents an objective function of a problem. Each Objective has a name, a direction (minimize or maximize), and functions for extracting the value of the objective from Moves and from Solutions. See docs for a detailed description.
-- (New) Util methods: CollectionUtil::getBest(Iterable,ToDoubleFunction), ArrayUtil::stats(double[]), ArrayUtil::stats(int[]), ArrayUtil::stats(long[])
+- (New) Util methods: CollectionUtil::getBest(Iterable,ToDoubleFunction), ArrayUtil::stats(double[]), ArrayUtil::stats(int[]), ArrayUtil::stats(long[]), ReferenceResult::setScore(String, double)
+- (New) Validator methods: getFailCount, getReasonsFailed
+- (New) Allow users to enable or disable validations for the current thread. New methods: Context.Configurator.enableValidations(), Context.Configurator.disableValidations()
 - (New) Support for AspectJ, first magic annotation @TimeStats implemented to measure the time of any method.
 - (New) Ablation test: run ablation test by default after autoconfig procedure.
 - (New) Irace plots: generate an HTML report with the results of running the autoconfig procedure.
+- (New) Two ParetoSet implementations are provided: a simple list based (should be correct, but slow) and a NDTree based implementation (should be fast, but may contain bugs).
+- (New) ValidationResult: allow accumulating errors.
+- (New) When we report an unhandled exception, filter some stackframes that are not relevant to the user code. Full stacktrace still logged at trace level.
+- (Breaking) Due to changes in how objectives are handled, ReferenceResult methods have been renamed for clarity.
+- (Breaking) Removed Improver::_improve, please implement Improver::improve directly instead. To migrate, just rename the method and make it public.
 - (Fix) Math.random, Collections.shuffle now blocked using AspectJ instead of reflection. --add-opens no longer necessary.
+- (Fix) Add @JsonIgnore to instance in solution class already exists in getter, but serializer may be configured to use fields instead of methods.
+- (Fix) Gracefully handle experiment declarations with 0 algorithms.
+- (Fix) #222 by @jmcolmenar: Local serializers.yml has no preference
+- (Fix) #229 by @scaverod: Solution properties are not exported to JSON
+- (Fix) Allow null customProperties in solution
 - (Deleted) Solution::isBetterThan, unused and not necessary.
 - (Deleted) Solution::getScore, Solution::recalculateScore: score recalculation should now be done in the solution validator implementation, and getScore can be any method the user wants, as long as it is declared as an Objective.
 - (Deleted) LazyMove & EagerMove: mostly unused and can be replaced by a normal Move. See SwapNeighborhood in TSP module for an example lazy implementation.

@@ -3,11 +3,14 @@ package es.urjc.etsii.morktests;
 import es.urjc.etsii.grafo.autoconfigtests.Main;
 import es.urjc.etsii.grafo.solver.Mork;
 import es.urjc.etsii.grafo.util.ConcurrencyUtil;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -18,6 +21,7 @@ import static es.urjc.etsii.grafo.orchestrator.InstanceSelector.DEFAULT_OUTPUT_P
 
 public class ComplexityAnalysisTest {
 
+    private final Logger log = org.slf4j.LoggerFactory.getLogger(ComplexityAnalysisTest.class);
     private static final Path propertiesPath = Path.of(DEFAULT_OUTPUT_PATH);
 
 
@@ -47,7 +51,7 @@ public class ComplexityAnalysisTest {
     }
 
     @Test
-    void testComplexity() {
+    void testComplexity() throws Exception{
         var success = Mork.start(new String[]{
                 "--server.port=0",
                 "--instance-properties",
@@ -57,24 +61,34 @@ public class ComplexityAnalysisTest {
         Assertions.assertTrue(success);
         Assertions.assertTrue(Files.exists(propertiesPath));
 
-        // Execute a normal experiment to extract time statistics from the algorithms we have configured
-        success = Mork.start(new String[]{
-                "--server.port=0",
-                "--instances.path.default=instancesautoconfig/sleepy",
-                "--solver.iterations=30",
-                "--solver.parallelExecutor=false",
-                "--solver.metrics=true",
-                "--solver.benchmark=false",
-                "--serializers.solution-json.enabled=true",
-                "--serializers.solution-json.frequency=all",
-                "--serializers.solution-json.folder=timestats",
-                "--event.webserver.stopOnExecutionEnd=true"
-        }, Main.AC_OBJECTIVE);
+        log.info("Warming up JVM...");
+        runComplexityOnce(); // first one is to allow JVM to warm up, ignore results
+        log.info("Starting complexity analysis...");
+        success = runComplexityOnce();
+
         Assertions.assertTrue(success);
-        Assertions.assertTrue(Files.exists(Path.of("timestats")));
+        Assertions.assertTrue(Files.exists(Path.of("solutions")));
         // TODO call python script to analyze results automatically
 
         // Sleep for 5 seconds to allow the webserver to be stopped
         ConcurrencyUtil.sleep(5, TimeUnit.SECONDS);
+    }
+
+    private static boolean runComplexityOnce() throws IOException {
+        // Execute a normal experiment to extract time statistics from the algorithms we have configured
+        FileUtils.deleteDirectory(new File("solutions"));
+        return Mork.start(new String[]{
+                "--server.port=0",
+                "--instances.path.default=instancesautoconfig/sleepy",
+                "--solver.iterations=5",
+                "--solver.parallelExecutor=true",
+                "--solver.nWorkers=30",
+                "--solver.metrics=true",
+                "--solver.benchmark=false",
+                "--serializers.solution-json.enabled=true",
+                "--serializers.solution-json.frequency=all",
+                "--serializers.solution-json.folder=solutions",
+                "--event.webserver.stopOnExecutionEnd=true"
+        }, Main.AC_OBJECTIVE);
     }
 }

@@ -46,14 +46,14 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.17.2</jackson.version>
-        <springboot.version>3.3.4</springboot.version>
+        <jackson.version>2.18.1</jackson.version>
+        <springboot.version>3.4.0</springboot.version>
         <mockito.version>5.14.1</mockito.version>
-        <byte-buddy.version>1.15.3</byte-buddy.version>
+        <byte-buddy.version>1.15.10</byte-buddy.version>
         <msurefire.version>3.5.1</msurefire.version>
         <mcompiler.version>3.13.0</mcompiler.version>
         <msource.version>3.3.1</msource.version>
-        <mjavadoc.version>3.10.1</mjavadoc.version>
+        <mjavadoc.version>3.11.1</mjavadoc.version>
         <mjar.version>3.4.2</mjar.version>
         <graalvm.version>24.1.0</graalvm.version>
         <maspectj.version>1.15.0</maspectj.version>
@@ -175,7 +175,7 @@
                     <artifactId>aspectj-maven-plugin</artifactId>
                     <version>${maspectj.version}</version>
                     <configuration>
-                        <complianceLevel>17</complianceLevel>
+                        <complianceLevel>21</complianceLevel>
                         <showWeaveInfo>true</showWeaveInfo>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <Xlint>ignore</Xlint>
@@ -225,7 +225,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.2.5</version>
+                <version>3.2.7</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
